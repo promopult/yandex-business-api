@@ -1,0 +1,51 @@
+{
+    "name": "promopult/yandex-business-api",
+    "description": "Yandex.Business API client PHP-library",
+    "type": "library",
+    "license": "UNLICENSE",
+    "authors": [
+        {
+            "name": "Dmitry Gladyshev",
+            "email": "dgladyshev@promopult.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.2",
+        "ext-json": "*",
+        "psr/http-client": "*",
+        "psr/simple-cache": "*",
+        "psr/http-message": "*",
+        "psr/http-factory": "*",
+        "guzzlehttp/psr7": "~1.7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "squizlabs/php_codesniffer": "*",
+        "guzzlehttp/guzzle": "~7.2.0",
+        "monolog/monolog": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Promopult\\YandexBusinessApi\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Promopult\\YandexBusinessApi\\Tests\\": [
+                "tests/"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    }
+}
