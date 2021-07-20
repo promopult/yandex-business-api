@@ -85,6 +85,7 @@ final class Client
      * @param string $budgetType
      * @param int $duration
      * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @deprecated
      */
     public function launchCampaignV2(
         int $campaignId,
@@ -109,6 +110,38 @@ final class Client
     }
 
     /**
+     * Бюджетный запуск
+     * Запускает рекламную компанию. На кошельке должны быть деньги. Происходит списание денег с кошелька и старт
+     * кампании. Нужно вызывать только для кампании в статусе waiting, stopped, finished. В противном случае произойдет
+     * продление еще не оконченной кампании.
+     *
+     * @param int $campaignId
+     * @param string $budgetType
+     * @param int $duration
+     *
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    public function launchCampaignV3(
+        int $campaignId,
+        string $budgetType,
+        int $duration
+    ): void {
+        $request = $this->createRequest(
+            'POST',
+            '/priority/v3/launch-campaign',
+            [
+                'campaignId' => $campaignId,
+                'budgetType' => $budgetType,
+                'duration' => $duration,
+            ]
+        );
+
+        $response = $this->httpClient->sendRequest($request);
+
+        $this->handleErrors($request, $response);
+    }
+
+    /**
      * Бюджетный расчет
      *
      * @param int $countryGeoId
@@ -116,7 +149,10 @@ final class Client
      * @param int|null $chainId
      * @param bool $branding
      * @return array
+     *
      * @throws \Psr\Http\Client\ClientExceptionInterface
+     *
+     * @deprecated
      */
     public function getPricesV2(
         int $countryGeoId,
@@ -132,6 +168,45 @@ final class Client
                 'branding' => $branding,
                 'companyId' => $companyId,
                 'chainId' => $chainId
+            ]
+        );
+
+        $response = $this->httpClient->sendRequest($request);
+
+        $this->handleErrors($request, $response);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+
+    /**
+     * Получение цен
+     *
+     * Показывает доступные бюджеты для конкретной рекламной кампании.
+     *
+     * @param int $countryGeoId
+     * @param int $campaignId
+     * @param int|null $chainId
+     * @param bool $branding
+     *
+     * @return array
+     *
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    public function getPricesV3(
+        int $countryGeoId,
+        int $campaignId,
+        ?int $chainId = null,
+        bool $branding = false
+    ): array {
+        $request = $this->createRequest(
+            'POST',
+            '/priority/v3/price',
+            [
+                'branding' => $branding,
+                'campaignId' => $campaignId,
+                'chainId' => $chainId,
+                'countryGeoId' => $countryGeoId,
             ]
         );
 
@@ -327,6 +402,8 @@ final class Client
      * @return array
      *
      * @throws \Psr\Http\Client\ClientExceptionInterface
+     *
+     * @deprecated
      */
     public function createCampaign(
         ?string $name = null,
@@ -342,6 +419,52 @@ final class Client
                 'companyId' => $companyId,
                 'chainId' => $chainId,
                 'countryGeoId' => $countryGeoId
+            ]
+        );
+
+        $response = $this->httpClient->sendRequest($request);
+
+        $this->handleErrors($request, $response);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * Создание рекламной кампании
+     *
+     * Создает рекламную кампанию. Операция асинхронная, чтобы получить ответ может быть нужно повторить запрос
+     * несколько раз. Передаем companyId если создаем на организацию с одной физической точкой (или один филиал сети),
+     * chainId если на всю сеть (сразу все филиалы). Создание на определенный набор филиалов пока недоступно.
+     *
+     * @param string $type              # Тип кампании WEB | GEO | SUBSCRIPTION
+     * @param int|null $chainId         # ID организации, у которых несколько физических точек (сетевые или франшизы)
+     * @param int|null $companyId       # Идентификатор организации, у которой только одна физическая точка.
+     * @param int|null $countryGeoId    # Географический идентификатор страны.
+     * @param string|null $name         # Имя рекламной кампании.
+     * @param string|null $url          # Требуется для типа WEB
+     *
+     * @return array
+     *
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    public function createCampaignV3(
+        string $type,
+        ?int $chainId = null,
+        ?int $companyId = null,
+        ?int $countryGeoId = null,
+        ?string $name = null,
+        ?string $url = null
+    ): array {
+        $request = $this->createRequest(
+            'POST',
+            '/priority/v3/create-campaign',
+            [
+                'companyId' => $companyId,
+                'chainId' => $chainId,
+                'countryGeoId' => $countryGeoId,
+                'name' => $name,
+                'type' => $type,
+                'url' => $url
             ]
         );
 

@@ -7,9 +7,8 @@ $client = new \Promopult\YandexBusinessApi\Client(
     new \GuzzleHttp\Client()
 );
 
-$client->launchCampaignV2(
-    getenv('__COMPANY_ID__'),
-    'geoproduct',
+$client->launchCampaignV3(
+    getenv('__CAMPAIGN_ID__'),
     'DEFAULT',
     90
 );
