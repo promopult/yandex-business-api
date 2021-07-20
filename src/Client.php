@@ -362,6 +362,52 @@ final class Client
     }
 
     /**
+     * Создание рекламной кампании
+     *
+     * Создает рекламную кампанию. Операция асинхронная, чтобы получить ответ может быть нужно повторить запрос
+     * несколько раз. Передаем companyId если создаем на организацию с одной физической точкой (или один филиал сети),
+     * chainId если на всю сеть (сразу все филиалы). Создание на определенный набор филиалов пока недоступно.
+     *
+     * @param string $type              # Тип кампании WEB | GEO | SUBSCRIPTION
+     * @param int|null $chainId         # ID организации, у которых несколько физических точек (сетевые или франшизы)
+     * @param int|null $companyId       # Идентификатор организации, у которой только одна физическая точка.
+     * @param int|null $countryGeoId    # Географический идентификатор страны.
+     * @param string|null $name         # Имя рекламной кампании.
+     * @param string|null $url          # Требуется для типа WEB
+     *
+     * @return array
+     *
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    public function createCampaignV3(
+        string $type,
+        ?int $companyId = null,
+        ?int $chainId = null,
+        ?int $countryGeoId = null,
+        ?string $name = null,
+        ?string $url = null
+    ): array {
+        $request = $this->createRequest(
+            'POST',
+            '/priority/v3/create-campaign',
+            [
+                'companyId' => $companyId,
+                'chainId' => $chainId,
+                'countryGeoId' => $countryGeoId,
+                'name' => $name,
+                'type' => $type,
+                'url' => $url
+            ]
+        );
+
+        $response = $this->httpClient->sendRequest($request);
+
+        $this->handleErrors($request, $response);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
      * @param int|null $companyId
      * @param int|null $chainId
      * @param int $countryGeoId
@@ -419,52 +465,6 @@ final class Client
                 'companyId' => $companyId,
                 'chainId' => $chainId,
                 'countryGeoId' => $countryGeoId
-            ]
-        );
-
-        $response = $this->httpClient->sendRequest($request);
-
-        $this->handleErrors($request, $response);
-
-        return json_decode($response->getBody()->getContents(), true);
-    }
-
-    /**
-     * Создание рекламной кампании
-     *
-     * Создает рекламную кампанию. Операция асинхронная, чтобы получить ответ может быть нужно повторить запрос
-     * несколько раз. Передаем companyId если создаем на организацию с одной физической точкой (или один филиал сети),
-     * chainId если на всю сеть (сразу все филиалы). Создание на определенный набор филиалов пока недоступно.
-     *
-     * @param string $type              # Тип кампании WEB | GEO | SUBSCRIPTION
-     * @param int|null $chainId         # ID организации, у которых несколько физических точек (сетевые или франшизы)
-     * @param int|null $companyId       # Идентификатор организации, у которой только одна физическая точка.
-     * @param int|null $countryGeoId    # Географический идентификатор страны.
-     * @param string|null $name         # Имя рекламной кампании.
-     * @param string|null $url          # Требуется для типа WEB
-     *
-     * @return array
-     *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
-     */
-    public function createCampaignV3(
-        string $type,
-        ?int $chainId = null,
-        ?int $companyId = null,
-        ?int $countryGeoId = null,
-        ?string $name = null,
-        ?string $url = null
-    ): array {
-        $request = $this->createRequest(
-            'POST',
-            '/priority/v3/create-campaign',
-            [
-                'companyId' => $companyId,
-                'chainId' => $chainId,
-                'countryGeoId' => $countryGeoId,
-                'name' => $name,
-                'type' => $type,
-                'url' => $url
             ]
         );
 

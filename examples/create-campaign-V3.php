@@ -10,10 +10,11 @@ $client = new \Promopult\YandexBusinessApi\Client(
 $response = $client
     ->useClientLogin(getenv('__CLIENT_LOGIN__'))
     ->createCampaignV3(
-        'Тестовая кампания для ' . getenv('__CLIENT_LOGIN__'),
+        'GEO',
         getenv('__COMPANY_ID__'),
         null,
-        225
+        225,
+        'Тестовая кампания для ' . getenv('__CLIENT_LOGIN__')
     );
 
 var_dump($response);
