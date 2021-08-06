@@ -195,7 +195,8 @@ final class Client
      */
     public function getPricesV3(
         int $countryGeoId,
-        int $campaignId,
+        ?int $campaignId = null,
+        ?int $companyId = null,
         ?int $chainId = null,
         bool $branding = false
     ): array {
@@ -207,6 +208,7 @@ final class Client
                 'campaignId' => $campaignId,
                 'chainId' => $chainId,
                 'countryGeoId' => $countryGeoId,
+                'companyId' => $companyId,
             ]
         );
 
@@ -410,14 +412,14 @@ final class Client
     /**
      * @param int|null $companyId
      * @param int|null $chainId
-     * @param int $countryGeoId
+     * @param int|null $countryGeoId
      * @return array
      * @throws \Psr\Http\Client\ClientExceptionInterface
      */
     public function isOwner(
         ?int $companyId,
         ?int $chainId,
-        int $countryGeoId
+        ?int $countryGeoId
     ): array {
         $request = $this->createRequest(
             'GET',
