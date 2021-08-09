@@ -186,6 +186,7 @@ final class Client
      *
      * @param int $countryGeoId
      * @param int $campaignId
+     * @param int|null $companyId
      * @param int|null $chainId
      * @param bool $branding
      *
@@ -195,7 +196,7 @@ final class Client
      */
     public function getPricesV3(
         int $countryGeoId,
-        ?int $campaignId = null,
+        int $campaignId,
         ?int $companyId = null,
         ?int $chainId = null,
         bool $branding = false
