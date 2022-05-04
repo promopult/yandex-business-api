@@ -3,48 +3,33 @@ declare(strict_types=1);
 
 namespace Promopult\YandexBusinessApi\Exception;
 
+use GuzzleHttp\Psr7\Message;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
 trait HttpExceptionTrait
 {
-    /**
-     * @var \Psr\Http\Message\RequestInterface
-     */
-    protected $request;
+    protected RequestInterface $request;
+    protected ResponseInterface $response;
 
-    /**
-     * @var \Psr\Http\Message\ResponseInterface
-     */
-    protected $response;
-
-    /**
-     * @return \Psr\Http\Message\RequestInterface
-     */
-    public function getRequest(): \Psr\Http\Message\RequestInterface
+    public function getRequest(): RequestInterface
     {
         return $this->request;
     }
 
-    /**
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function getResponse(): \Psr\Http\Message\ResponseInterface
+    public function getResponse(): ResponseInterface
     {
         return $this->response;
     }
 
-    /**
-     * @return string
-     */
     public function getResponseAsString(): string
     {
-        return \GuzzleHttp\Psr7\Message::toString($this->response);
+        return Message::toString($this->response);
     }
 
-    /**
-     * @return string
-     */
     public function getRequestAsString(): string
     {
-        return \GuzzleHttp\Psr7\Message::toString($this->request);
+        return Message::toString($this->request);
     }
 
     public function __toString(): string

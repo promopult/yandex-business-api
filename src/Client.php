@@ -4,24 +4,17 @@ declare(strict_types=1);
 
 namespace Promopult\YandexBusinessApi;
 
-/**
- * Class Client
- */
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+
 final class Client
 {
-    /**
-     * @var \Psr\Http\Client\ClientInterface
-     */
-    private $httpClient;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private ClientInterface $httpClient;
+    private ConfigInterface $config;
 
     public function __construct(
-        \Promopult\YandexBusinessApi\ConfigInterface $config,
-        \Psr\Http\Client\ClientInterface $httpClient
+        ConfigInterface $config,
+        ClientInterface $httpClient
     ) {
         $this->httpClient = $httpClient;
         $this->config = $config;
@@ -34,7 +27,7 @@ final class Client
      *
      * @param int $campaignId
      * @return array
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      *
      * @see https://yandex.ru/dev/business-api/doc/ref/Campaign_management/GetCampaingGet.html
      */
@@ -52,7 +45,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -60,7 +53,7 @@ final class Client
      *
      * @return array
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function pingping(): array
     {
@@ -69,7 +62,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -84,7 +77,7 @@ final class Client
      * @param string $product
      * @param string $budgetType
      * @param int $duration
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      * @deprecated
      */
     public function launchCampaignV2(
@@ -119,7 +112,7 @@ final class Client
      * @param string $budgetType
      * @param int $duration
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function launchCampaignV3(
         int $campaignId,
@@ -150,7 +143,7 @@ final class Client
      * @param bool $branding
      * @return array
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      *
      * @deprecated
      */
@@ -175,7 +168,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
 
@@ -185,21 +178,21 @@ final class Client
      * Показывает доступные бюджеты для конкретной рекламной кампании.
      *
      * @param int $countryGeoId
-     * @param int $campaignId
-     * @param int|null $companyId
-     * @param int|null $chainId
+     * @param ?int $campaignId
+     * @param ?int $companyId
+     * @param ?int $chainId
      * @param bool $branding
      *
      * @return array
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function getPricesV3(
         int $countryGeoId,
-        int $campaignId,
-        ?int $companyId = null,
-        ?int $chainId = null,
-        bool $branding = false
+        ?int $campaignId,
+        ?int $companyId,
+        ?int $chainId,
+        bool $branding
     ): array {
         $request = $this->createRequest(
             'POST',
@@ -217,14 +210,14 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
      * Баланс кошелька (нужно для перевода средств).
      *
      * @return array
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function getBalance(): array
     {
@@ -233,7 +226,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -243,7 +236,7 @@ final class Client
      * @param string $contract
      * @param string $currency # Варианты 'byn' | 'kzt' | 'rub' | 'uah'
      * @param float $amount
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function deposit(
         int $walletId,
@@ -278,7 +271,7 @@ final class Client
      * @param int $arbitrateRate
      * @param bool $priority
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function launchCampaignV1(
         int $campaignId,
@@ -307,7 +300,7 @@ final class Client
      * @param int $dstWallet # id кошелька на который нужно перевести
      * @param float $sumOld # текущая сумма на кошельке с которого переводить
      * @param float $sumNew # сумма на кошельке с которого переводить ПОСЛЕ перевода
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function billingTransfer(
         int $srcWallet,
@@ -340,7 +333,7 @@ final class Client
      *
      * @return array
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function companySearch(
         string $text,
@@ -361,7 +354,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -380,7 +373,7 @@ final class Client
      *
      * @return array
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function createCampaignV3(
         string $type,
@@ -407,7 +400,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -415,7 +408,7 @@ final class Client
      * @param int|null $chainId
      * @param int|null $countryGeoId
      * @return array
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function isOwner(
         ?int $companyId,
@@ -436,7 +429,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -450,7 +443,7 @@ final class Client
      *
      * @return array
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      *
      * @deprecated
      */
@@ -475,7 +468,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -485,7 +478,7 @@ final class Client
      *
      * @return array
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function getCampaigns(
         int $limit,
@@ -504,7 +497,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -515,7 +508,7 @@ final class Client
      * @param array $arbitrateRates
      * @return array
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function getPricesV1(
         int $countryGeoId,
@@ -542,7 +535,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -552,7 +545,7 @@ final class Client
      * @param string $promocode
      * @return array
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      *
      * @see https://yandex.ru/dev/business-api/doc/ref/Campaign_management/ApplyPromocodePost.html
      */
@@ -573,7 +566,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -583,7 +576,7 @@ final class Client
      *
      * @return array
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      *
      * @see https://yandex.ru/dev/business-api/doc/ref/Campaign_management/DiscardPromocodePost.html
      */
@@ -601,7 +594,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -619,7 +612,7 @@ final class Client
      * @param string $managerEmail
      * @param string $product
      * @return array
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      *
      * @see https://yandex.ru/dev/business-api/doc/ref/Generate_commercial_offer/GenerateCommercialOfferPost.html
      */
@@ -652,7 +645,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -661,7 +654,7 @@ final class Client
      *
      * @param int $taskId
      * @return array
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      *
      * @see https://yandex.ru/dev/business-api/doc/ref/Generate_commercial_offer/GetCommercialOfferGet.html
      */
@@ -679,7 +672,7 @@ final class Client
 
         $this->handleErrors($request, $response);
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**

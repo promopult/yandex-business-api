@@ -1,30 +1,28 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Promopult\YandexBusinessApi\Exception;
+
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
 class BusinessErrorException extends \RuntimeException
 {
     use HttpExceptionTrait;
 
-    /**
-     * @var string
-     */
-    protected $businessCode;
-
-    /**
-     * @var array|null
-     */
-    private $businessData;
+    protected string $businessCode;
+    private ?array $businessData;
 
     public function __construct(
-        \Psr\Http\Message\RequestInterface $request,
-        \Psr\Http\Message\ResponseInterface $response,
+        RequestInterface $request,
+        ResponseInterface $response,
         string $businessCode,
         ?array $businessData = null,
         string $message = '',
         int $code = 0,
-        \Throwable $previous = null
+        Throwable $previous = null
     ) {
         parent::__construct($message, $code, $previous);
 
@@ -34,17 +32,11 @@ class BusinessErrorException extends \RuntimeException
         $this->businessData = $businessData;
     }
 
-    /**
-     * @return string
-     */
     public function getBusinessCode(): string
     {
         return $this->businessCode;
     }
 
-    /**
-     * @return array|null
-     */
     public function getBusinessData(): ?array
     {
         return $this->businessData;

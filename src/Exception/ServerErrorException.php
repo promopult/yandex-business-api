@@ -1,20 +1,21 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Promopult\YandexBusinessApi\Exception;
+
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class ServerErrorException extends \RuntimeException
 {
     use HttpExceptionTrait;
 
-    /**
-     * @var string
-     */
-    protected $requestId;
+    protected string $requestId;
 
     public function __construct(
-        \Psr\Http\Message\RequestInterface $request,
-        \Psr\Http\Message\ResponseInterface $response,
+        RequestInterface $request,
+        ResponseInterface $response,
         string $requestId = "",
         string $message = "",
         int $code = 0,
@@ -27,9 +28,6 @@ class ServerErrorException extends \RuntimeException
         $this->requestId = $requestId;
     }
 
-    /**
-     * @return string
-     */
     public function getRequestId(): string
     {
         return $this->requestId;

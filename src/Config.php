@@ -1,24 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Promopult\YandexBusinessApi;
 
-final class Config implements \Promopult\YandexBusinessApi\ConfigInterface
+final class Config implements ConfigInterface
 {
-    /**
-     * @var string
-     */
-    private $accessToken;
-
-    /**
-     * @var string
-     */
-    private $clientLogin;
-
-    /**
-     * @var string
-     */
-    private $apiHost;
+    private string $accessToken;
+    private string $clientLogin;
+    private string $apiHost;
 
     public function __construct(
         string $accessToken,
@@ -30,17 +20,11 @@ final class Config implements \Promopult\YandexBusinessApi\ConfigInterface
         $this->apiHost = $apiHost;
     }
 
-    /**
-     * @return string
-     */
     public function getAccessToken(): string
     {
         return $this->accessToken;
     }
 
-    /**
-     * @return string
-     */
     public function getClientLogin(): string
     {
         return $this->clientLogin;
@@ -51,9 +35,6 @@ final class Config implements \Promopult\YandexBusinessApi\ConfigInterface
         $this->clientLogin = $clientLogin;
     }
 
-    /**
-     * @return string
-     */
     public function getApiHost(): string
     {
         return $this->apiHost;
