@@ -18,7 +18,7 @@
         "psr/simple-cache": "*",
         "psr/http-message": "*",
         "psr/http-factory": "*",
-        "guzzlehttp/psr7": "~2.4.0"
+        "guzzlehttp/psr7": "~1.7.0|~2.4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
