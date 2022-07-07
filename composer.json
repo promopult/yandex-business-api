@@ -12,18 +12,18 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.4",
+        "php": "^7.4|^8.0",
         "ext-json": "*",
         "psr/http-client": "*",
         "psr/simple-cache": "*",
         "psr/http-message": "*",
         "psr/http-factory": "*",
-        "guzzlehttp/psr7": "~1.7.0"
+        "guzzlehttp/psr7": "~2.4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
         "squizlabs/php_codesniffer": "*",
-        "guzzlehttp/guzzle": "~7.2.0",
+        "guzzlehttp/guzzle": "~7.4.5",
         "monolog/monolog": "*"
     },
     "autoload": {
