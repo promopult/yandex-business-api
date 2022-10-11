@@ -7,9 +7,13 @@ $client = new \Promopult\YandexBusinessApi\Client(
     new \GuzzleHttp\Client()
 );
 
-$response = $client->getPricesV3(
-    225,
-    getenv('__CAMPAIGN_ID__')
-);
+$response = $client
+    ->useClientLogin(getenv('__CLIENT_LOGIN__'))
+    ->createCampaignV4(
+        true,
+        getenv('__COMPANY_ID__'),
+        null,
+        225
+    );
 
 var_dump($response);

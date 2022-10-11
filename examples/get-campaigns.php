@@ -9,6 +9,6 @@ $client = new \Promopult\YandexBusinessApi\Client(
 
 $response = $client
     ->useClientLogin(getenv('__CLIENT_LOGIN__'))
-    ->getCampaigns(1000, 0);
+    ->getCampaignsV4(1000, 0);
 
 var_dump($response);

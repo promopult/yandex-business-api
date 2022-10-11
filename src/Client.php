@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Promopult\YandexBusinessApi;
 
+use GuzzleHttp\Psr7\Request;
+use Promopult\YandexBusinessApi\Exception\BusinessErrorException;
+use Promopult\YandexBusinessApi\Exception\ServerErrorException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 final class Client
 {
@@ -30,10 +35,12 @@ final class Client
      * @throws ClientExceptionInterface
      *
      * @see https://yandex.ru/dev/business-api/doc/ref/Campaign_management/GetCampaingGet.html
+     *
+     * @deprecated
      */
     public function getCampaign(int $campaignId): array
     {
-        $request = $this->createRequest(
+        $response = $this->requestApi(
             'GET',
             '/priority/v1/get-campaign',
             [
@@ -41,9 +48,28 @@ final class Client
             ]
         );
 
-        $response = $this->httpClient->sendRequest($request);
+        return json_decode($response->getBody()->__toString(), true);
+    }
 
-        $this->handleErrors($request, $response);
+    /**
+     * Информация о рекламной кампании
+     *
+     * @param int $campaignId   ID рекламной кампании
+     * @return array
+     *
+     * @throws ClientExceptionInterface
+     *
+     * @see https://yandex.ru/dev/business-api/doc/ref/Campaign_management/GetCampaingGetV4.html
+     */
+    public function getCampaignV4(int $campaignId): array
+    {
+        $response = $this->requestApi(
+            'GET',
+            '/priority/v4/get-campaign',
+            [
+                'campaignId' => $campaignId,
+            ]
+        );
 
         return json_decode($response->getBody()->__toString(), true);
     }
@@ -113,6 +139,8 @@ final class Client
      * @param int $duration
      *
      * @throws ClientExceptionInterface
+     *
+     * @deprecated
      */
     public function launchCampaignV3(
         int $campaignId,
@@ -132,6 +160,66 @@ final class Client
         $response = $this->httpClient->sendRequest($request);
 
         $this->handleErrors($request, $response);
+    }
+
+    /**
+     * Запуск рекламной кампании
+     *
+     * @param int $campaignId       ID рекламной кампании
+     * @param int $duration         Продолжительность рекламной кампании (90 | 180 | 360)
+     * @param float $monthAmount    Сумма месячного бюджета рекламной кампании. Должна быть не меньше значения
+     *                              в MINIMAL бюджете за 30 дней
+     * @return void
+     * @throws ClientExceptionInterface
+     *
+     * @see https://yandex.ru/dev/business-api/doc/ref/Campaign_management/LaunchCampaignPostV4.html
+     */
+    public function launchCampaignV4(
+        int $campaignId,
+        int $duration,
+        float $monthAmount
+    ): void {
+        $this->requestApi(
+            'POST',
+            '/priority/v3/launch-campaign',
+            [
+                'campaignId' => $campaignId,
+                'monthAmount' => $monthAmount,
+                'duration' => $duration,
+            ]
+        );
+    }
+
+    /**
+     * Указание рекламодателя
+     *
+     * @param string $email
+     * @param string $inn
+     * @param string $phone
+     * @param string $type
+     * @return array
+     * @throws ClientExceptionInterface
+     *
+     * @see https://yandex.ru/dev/business-api/doc/ref/Campaign_management/CampaignBeneficiaryV4.html
+     */
+    public function setCampaignBeneficiaryV4(
+        string $email,
+        string $inn,
+        string $phone,
+        string $type
+    ): array {
+        $response = $this->requestApi(
+            'POST',
+            '/priority/v4/campaign-beneficiary',
+            [
+                'email' => $email,
+                'inn' => $inn,
+                'phone' => $phone,
+                'type' => $type,
+            ]
+        );
+
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -186,6 +274,8 @@ final class Client
      * @return array
      *
      * @throws ClientExceptionInterface
+     *
+     * @deprecated
      */
     public function getPricesV3(
         int $countryGeoId,
@@ -209,6 +299,30 @@ final class Client
         $response = $this->httpClient->sendRequest($request);
 
         $this->handleErrors($request, $response);
+
+        return json_decode($response->getBody()->__toString(), true);
+    }
+
+    /**
+     * Получение цен для кампании
+     *
+     * @param int $campaignId   ID рекламной кампании
+     * @return array
+     *
+     * @throws ClientExceptionInterface
+     *
+     * @see https://yandex.ru/dev/business-api/doc/ref/Campaign_management/CampaignPriceGetV4.html
+     */
+    public function getPricesV4(
+        int $campaignId
+    ): array {
+        $response = $this->requestApi(
+            'GET',
+            '/priority/v4/campaign-price',
+            [
+                'campaignId' => $campaignId,
+            ]
+        );
 
         return json_decode($response->getBody()->__toString(), true);
     }
@@ -272,6 +386,8 @@ final class Client
      * @param bool $priority
      *
      * @throws ClientExceptionInterface
+     *
+     * @deprecated
      */
     public function launchCampaignV1(
         int $campaignId,
@@ -374,6 +490,8 @@ final class Client
      * @return array
      *
      * @throws ClientExceptionInterface
+     *
+     * @deprecated
      */
     public function createCampaignV3(
         string $type,
@@ -392,6 +510,45 @@ final class Client
                 'countryGeoId' => $countryGeoId,
                 'name' => $name,
                 'type' => $type,
+                'url' => $url
+            ]
+        );
+
+        $response = $this->httpClient->sendRequest($request);
+
+        $this->handleErrors($request, $response);
+
+        return json_decode($response->getBody()->__toString(), true);
+    }
+
+    /**
+     * @param bool $mapsOnly            Создание кампании с рекламой только на Яндекс Картах
+     * @param int|null $companyId       Идентификатор организации, у которой только одна физическая точка
+     * @param int|null $chainId         ID организации, у которых несколько физических точек (сетевые или франшизы)
+     * @param int|null $countryGeoId    Географический идентификатор страны. Обязательный при указании chainId
+     * @param string|null $url          Рекламируемый сайт. Не учитывается при указании chainId или mapsOnly
+     *
+     * @return array
+     *
+     * @throws ClientExceptionInterface
+     *
+     * @see https://yandex.ru/dev/business-api/doc/ref/Campaign_management/CreateCampaignPostV4.html
+     */
+    public function createCampaignV4(
+        bool $mapsOnly,
+        ?int $companyId = null,
+        ?int $chainId = null,
+        ?int $countryGeoId = null,
+        ?string $url = null
+    ): array {
+        $request = $this->createRequest(
+            'POST',
+            '/priority/v4/create-campaign',
+            [
+                'companyId' => $companyId,
+                'chainId' => $chainId,
+                'countryGeoId' => $countryGeoId,
+                'mapsOnly' => $mapsOnly,
                 'url' => $url
             ]
         );
@@ -479,6 +636,8 @@ final class Client
      * @return array
      *
      * @throws ClientExceptionInterface
+     *
+     * @deprecated
      */
     public function getCampaigns(
         int $limit,
@@ -500,6 +659,22 @@ final class Client
         return json_decode($response->getBody()->__toString(), true);
     }
 
+    public function getCampaignsV4(
+        int $limit,
+        int $offset = 0
+    ): array {
+        $response = $this->requestApi(
+            'GET',
+            '/priority/v4/get-campaigns',
+            [
+                'limit' => $limit,
+                'offset' => $offset,
+            ]
+        );
+
+        return json_decode($response->getBody()->__toString(), true);
+    }
+
     /**
      * @param int $countryGeoId // countryGeoId страны из поиска
      * @param int|null $companyId // id орги из поиска, если одноорг
@@ -509,6 +684,8 @@ final class Client
      * @return array
      *
      * @throws ClientExceptionInterface
+     *
+     * @deprecated
      */
     public function getPricesV1(
         int $countryGeoId,
@@ -675,6 +852,24 @@ final class Client
         return json_decode($response->getBody()->__toString(), true);
     }
 
+    public function requestApi(
+        string $httpMethod,
+        string $endpoint,
+        ?array $params = null
+    ): ResponseInterface {
+        $request = $this->createRequest(
+            $httpMethod,
+            $endpoint,
+            $params
+        );
+
+        $response = $this->httpClient->sendRequest($request);
+
+        $this->handleErrors($request, $response);
+
+        return $response;
+    }
+
     /**
      * @param string $clientLogin
      * @return $this
@@ -702,7 +897,7 @@ final class Client
         string $method,
         string $url,
         ?array $params = null
-    ): \Psr\Http\Message\RequestInterface {
+    ): RequestInterface {
         $headers = [
             'Content-Type' => 'application/json; charset=utf-8',
             'Accept' => 'application/json',
@@ -731,19 +926,19 @@ final class Client
                 break;
         }
 
-        return new \GuzzleHttp\Psr7\Request($method, $uri, $headers, $body);
+        return new Request($method, $uri, $headers, $body);
     }
 
     private function handleErrors(
-        \Psr\Http\Message\RequestInterface $request,
-        \Psr\Http\Message\ResponseInterface $response
+        RequestInterface $request,
+        ResponseInterface $response
     ): void {
         $decodedJsonBody = json_decode($response->getBody()->__toString(), true);
 
         if (isset($decodedJsonBody['error'])
             && isset($decodedJsonBody['error']['businessCode'])
         ) {
-            throw new \Promopult\YandexBusinessApi\Exception\BusinessErrorException(
+            throw new BusinessErrorException(
                 $request,
                 $response,
                 $decodedJsonBody['error']['businessCode'],
@@ -754,7 +949,7 @@ final class Client
         }
 
         if ($response->getStatusCode() !== 200) {
-            throw new \Promopult\YandexBusinessApi\Exception\ServerErrorException(
+            throw new ServerErrorException(
                 $request,
                 $response,
                 $decodedJsonBody['error']['requestId'] ?? '',

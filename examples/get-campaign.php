@@ -7,8 +7,8 @@ $client = new \Promopult\YandexBusinessApi\Client(
     new \GuzzleHttp\Client()
 );
 
-$client->launchCampaignV3(
-    getenv('__CAMPAIGN_ID__'),
-    'DEFAULT',
-    90
-);
+$response = $client
+    ->useClientLogin(getenv('__CLIENT_LOGIN__'))
+    ->getCampaignV4(getenv('__CAMPAIGN_ID__'));
+
+var_dump($response);

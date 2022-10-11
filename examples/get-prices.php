@@ -7,10 +7,8 @@ $client = new \Promopult\YandexBusinessApi\Client(
     new \GuzzleHttp\Client()
 );
 
-$response = $client->companySearch(
-    'клуб успешных врачей',
-    10,
-    0
+$response = $client->getPricesV4(
+    getenv('__CAMPAIGN_ID__')
 );
 
-echo json_encode($response, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+var_dump($response);
