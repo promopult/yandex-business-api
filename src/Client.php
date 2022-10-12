@@ -193,16 +193,30 @@ final class Client
     /**
      * Указание рекламодателя
      *
-     * @param string $email
-     * @param string $inn
-     * @param string $phone
-     * @param string $type
+     * @param int $campaignId   ID рекламной кампании
+     * @param string $email     Email рекламодателя
+     * @param string $inn       ИНН рекламодателя. Обязателен для типов рекламодателей:
+     *                            - LEGAL - Юридическое лицо (12 символов)
+     *                            - FOREIGN_LEGAL - Иностранное юридическое лицо (от 1 до 50 символов)
+     *                            - INDIVIDUAL - ИП (12 символов)
+     * @param string $phone     Номер телефона рекламодателя. Обязательное поле для типов рекламодателей:
+     *                            - FOREIGN_PHYSICAL - Иностранное физическое лицо
+     *                            - PHYSICAL - Физическое лицо
+     * @param string $type      Тип рекламодателя. Возможные значения:
+     *                              - FOREIGN_LEGAL - Иностранное юридическое лицо
+     *                              - FOREIGN_PHYSICAL - Иностранное физическое лицо
+     *                              - INDIVIDUAL - ИП
+     *                              - LEGAL - Юридическое лицо
+     *                              - PHYSICAL - Физическое лицо
+     *
      * @return array
+     *
      * @throws ClientExceptionInterface
      *
      * @see https://yandex.ru/dev/business-api/doc/ref/Campaign_management/CampaignBeneficiaryV4.html
      */
     public function setCampaignBeneficiaryV4(
+        int $campaignId,
         string $email,
         string $inn,
         string $phone,
@@ -212,10 +226,13 @@ final class Client
             'POST',
             '/priority/v4/campaign-beneficiary',
             [
-                'email' => $email,
-                'inn' => $inn,
-                'phone' => $phone,
-                'type' => $type,
+                'campaignId' => $campaignId,
+                'beneficiary' => [
+                    'email' => $email,
+                    'inn' => $inn,
+                    'phone' => $phone,
+                    'type' => $type,
+                ]
             ]
         );
 
