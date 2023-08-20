@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Promopult\YandexBusinessApi;
 
 use GuzzleHttp\Psr7\Request;
+use Promopult\YandexBusinessApi\Dto\CampaignBeneficiary;
+use Promopult\YandexBusinessApi\Dto\CampaignClient;
+use Promopult\YandexBusinessApi\Dto\CampaignContract;
+use Promopult\YandexBusinessApi\Dto\CampaignContractor;
 use Promopult\YandexBusinessApi\Exception\BusinessErrorException;
 use Promopult\YandexBusinessApi\Exception\ServerErrorException;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -237,6 +241,62 @@ final class Client
         );
 
         return json_decode($response->getBody()->__toString(), true);
+    }
+
+    /**
+     * Заполнение данных о рекламодателе
+     *
+     * @param int                $campaignId Id рекламной кампании
+     * @param CampaignClient     $campaign_client Данные конечного рекламодателя
+     * @param CampaignContractor $campaign_contractor Посредник
+     * @param CampaignContract   $campaign_contract Договор между клиентом и посредником, обязательно если
+     *
+     * @return array
+     */
+    public function setCampaignBeneficiaryV5(
+        int $campaignId,
+        CampaignClient $campaign_client,
+        CampaignContractor $campaign_contractor,
+        CampaignContract $campaign_contract
+    ): array {
+        $body =[
+            'campaignId' => $campaignId,
+            'beneficiary' => [
+                'client'=>$campaign_client->toArray(),
+                'contractor'=>$campaign_contractor->toArray(),
+                'contract'=>$campaign_contract->toArray()
+            ]
+        ];
+
+        $response = $this->requestApi(
+            'POST',
+            '/priority/v5/campaign-beneficiary',
+            $body
+        );
+
+        return json_decode($response->getBody()->__toString(), true);
+    }
+
+    /**
+     * Получение данных о рекламодателе
+     *
+     * @param int $campaign_id Id рекламной кампании
+     *
+     * @return CampaignBeneficiary|null
+     */
+    public function getCampaignBeneficiaryV5(int $campaign_id): ?CampaignBeneficiary
+    {
+        $response = $this->requestApi(
+            'GET',
+            '/priority/v5/get-campaign-beneficiary?campaignId='.$campaign_id
+        );
+
+        $content =  json_decode($response->getBody()->__toString(), true);
+        if (empty($content['data'])){
+            return null;
+        }
+
+        return CampaignBeneficiary::fromArray($content['data']);
     }
 
     /**
