@@ -6,17 +6,20 @@ class CampaignBeneficiary
 {
     public function __construct(
         public CampaignClient $client,
-        public CampaignContractor $contractor,
-        public CampaignContract $contract
+        public ?CampaignContractor $contractor = null,
+        public ?CampaignContract $contract = null
     ) {
     }
 
     public static function fromArray(array $data): self
     {
+        $contractor = !empty($data['contractor']) ? CampaignContractor::fromArray($data['contractor']) : null;
+        $contract = !empty($data['contract']) ? CampaignContract::fromArray($data['contract']) : null;
+
         return new self(
             client: CampaignClient::fromArray($data['client']),
-            contractor: CampaignContractor::fromArray($data['contractor']),
-            contract: CampaignContract::fromArray($data['contract']),
+            contractor: $contractor,
+            contract: $contract,
         );
     }
 }
