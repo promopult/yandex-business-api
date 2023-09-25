@@ -21,7 +21,7 @@ class CampaignContract
             type: $data['type'],
             number: $data['number'],
             date: $data['date'],
-            amount: $data['amount'],
+            amount: $data['amount'] ?? 0,
             isVat: $data['isVat'],
             actionType: $data['actionType'] ?? null,
             subjectType: $data['subjectType'] ?? null,
