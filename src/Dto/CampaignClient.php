@@ -6,8 +6,8 @@ class CampaignClient
 {
     public function __construct(
         public string $type,
-        public string $name,
-        public array $okveds,
+        public ?string $name = null,
+        public ?array $okveds = null,
         public ?string $inn = null,
         public ?string $phoneNum = null,
         public ?string $epayNumber = null,
@@ -21,8 +21,8 @@ class CampaignClient
     {
         return new self(
             type: $data['type'],
-            name: $data['name'],
-            okveds: $data['okveds'],
+            name: $data['name'] ?? null,
+            okveds: $data['okveds'] ?? null,
             inn: $data['inn'] ?? null,
             phoneNum: $data['phoneNum'] ?? null,
             epayNumber: $data['epayNumber'] ?? null,
