@@ -9,7 +9,7 @@ class CampaignContract
         public string $number,
         public string $date,
         public float $amount,
-        public bool $isVat,
+        public ?bool $isVat = null,
         public ?string $actionType = null,
         public ?string $subjectType = null,
     ) {
@@ -22,7 +22,7 @@ class CampaignContract
             number: $data['number'],
             date: $data['date'],
             amount: $data['amount'] ?? 0,
-            isVat: $data['isVat'],
+            isVat: $data['isVat'] ?? null,
             actionType: $data['actionType'] ?? null,
             subjectType: $data['subjectType'] ?? null,
         );
