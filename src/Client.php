@@ -277,6 +277,30 @@ final class Client
         return json_decode($response->getBody()->__toString(), true);
     }
 
+    public function setCampaignBeneficiaryV6(
+        int $campaignId,
+        CampaignClient $campaign_client,
+        CampaignContractor $campaign_contractor,
+        CampaignContract $campaign_contract
+    ): array {
+        $body = [
+            'campaignId'  => $campaignId,
+            'beneficiary' => [
+                'client'     => $campaign_client->toArray(),
+                'contractor' => $campaign_contractor->toArray(),
+                'contract'   => $campaign_contract->toArray(),
+            ],
+        ];
+
+        $response = $this->requestApi(
+            'POST',
+            '/priority/v6/campaign-beneficiary',
+            $body
+        );
+
+        return json_decode($response->getBody()->__toString(), true);
+    }
+
     /**
      * Получение данных о рекламодателе
      *
