@@ -14,6 +14,7 @@ class CampaignClient
         public ?string $oksmNumber = null,
         public ?string $vat = null,
         public ?string $regNumber = null,
+        public ?string $kpp = null
     ) {
     }
 
@@ -29,6 +30,7 @@ class CampaignClient
             oksmNumber: $data['oksmNumber'] ?? null,
             vat: $data['vat'] ?? null,
             regNumber: $data['regNumber'] ?? null,
+            kpp: $data['kpp'] ?? null
         );
     }
 
