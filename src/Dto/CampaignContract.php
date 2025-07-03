@@ -12,6 +12,7 @@ class CampaignContract
         public ?bool $isVat = null,
         public ?string $actionType = null,
         public ?string $subjectType = null,
+        public ?bool $isChargePaidByAgent = null
     ) {
     }
 
@@ -25,6 +26,7 @@ class CampaignContract
             isVat: $data['isVat'] ?? null,
             actionType: $data['actionType'] ?? null,
             subjectType: $data['subjectType'] ?? null,
+            isChargePaidByAgent: $data['isChargePaidByAgent'] ?? null
         );
     }
 
